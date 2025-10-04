@@ -1,35 +1,27 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import Login from "./pages/Login";
+import AdminDashboard from "./pages/AdminDashboard";
+import EmployeeDashboard from "./pages/EmployeeDashboard";
+import { mockLogin } from "./lib/mockAuth";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [user, setUser] = useState(null);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+  const handleLogin = (email, password, role) => {
+    const loggedUser = mockLogin(email, password, role);
+    if (loggedUser) setUser(loggedUser);
+    else alert("Invalid credentials");
+  };
+
+  const handleLogout = () => setUser(null);
+
+  if (!user) return <Login onLogin={handleLogin} />;
+
+  return user.role === "admin" ? (
+    <AdminDashboard user={user} onLogout={handleLogout} />
+  ) : (
+    <EmployeeDashboard user={user} onLogout={handleLogout} />
+  );
 }
 
-export default App
+export default App;
